@@ -1,5 +1,5 @@
 # Adventure Works Analysis With Stored Procedures,Streamlit, plotly
-This projects seeks to analyse the AdventuresWorks sample data using of Stored Procedures in MS SQL and Python for data analysis. I also used streamlit to create a web app that display the visualisations
+This projects seeks to analyse the AdventuresWorks sample data using of Stored Procedures in MS SQL and Python for data analysis. I also used streamlit to create a web app that displays the visualisations
 # Intallations
 Kindly install the neccessary packages by running 
 pip install requirements.txt
