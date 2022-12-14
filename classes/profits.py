@@ -52,3 +52,27 @@ def display_aggregated_profit():
 
     df=pd.read_sql_query(f'execute selecte_aggregated_profit',init_connect())
     return df
+
+def display_weekly_profits():
+
+    df=pd.read_sql_query('execute select_weekly_profit',init_connect())
+    fig=px.line(df,x='Week',y='Total Profit',
+    title='Adventure Works Weekly Profits ',
+    color='Year',
+    #color_discrete_sequence=colour_list,
+    labels={'Week':'Week','Total Profit':'Profit'})
+    #fig.update_layout(showlegend=False)
+    return df, fig
+
+#calling a stored procedure in ms sql server to display week day sales
+# from adventure works sample database
+def display_weekday_profits():
+
+    df=pd.read_sql_query('execute select_weekday_profit',init_connect())
+    fig=px.line(df,x='WeekDay',y='Total Profit',
+    title='Adventure Works Week Day Profits ',
+    color='Year',
+    #color_discrete_sequence=colour_list,
+    labels={'WeekDay':'Day','Total Profit':'Profit'})
+    #fig.update_layout(showlegend=False)
+    return df, fig

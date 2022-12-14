@@ -7,6 +7,8 @@ from classes.profits import display_annual_profit
 from classes.profits import display_monthly_profit
 from classes.profits import display_quaterly_profit
 from classes.profits import display_aggregated_profit
+from classes.profits import display_weekly_profits
+from classes.profits import display_weekday_profits
 
 css_path=os.path.join('static','style.css')
 
@@ -45,9 +47,9 @@ with tab5:
  #display monthly profit       
 with tab3:
     result,fig=display_monthly_profit()
-    visual_display=st.radio('tab3Display',('Line Graph','Table'),
+    visual_display=st.radio('tab3Display',('Bar Graph','Table'),
     label_visibility='hidden',horizontal=True)
-    if visual_display=='Line Graph':
+    if visual_display=='Bar Graph':
         st.plotly_chart(fig)
     elif visual_display=='Table':
         result=result[['Month','Year','Profit','PreviousMonthProfit']]
@@ -61,5 +63,28 @@ with tab4:
     elif visual_display=='Table':
         result=result[['Quarter','Profit']]
         st.dataframe(result,use_container_width=True)
+with tab2:
+    result,fig=display_weekly_profits()
+    visual_display=st.radio('tab2Display',('Line Graph','Table'),
+    label_visibility='hidden',horizontal=True)
+    if visual_display=='Line Graph':
+        st.plotly_chart(fig)
+    elif visual_display=='Table':
+        result=result[['Week','Month','Year','Total Profit']]
+        st.dataframe(result,use_container_width=True)
+
 with tab1:
-    pass
+    #week day profits
+    result,fig=display_weekday_profits()
+    display=st.radio('tab1Display Type',('Line','Table'),horizontal=True,label_visibility='hidden')
+
+    if display=='Line':
+        #display bar chart
+        st.plotly_chart(fig)
+    elif display=='Table':
+        result=result[['WeekDay','Year','Total Profit']]
+        st.dataframe(result,use_container_width=True)
+    with st.expander("See narations"):
+        text="""Monday is an interesting day. Losses were made on Mondays in 2012
+        but had the highest profit in 2013. """
+        st.write(text)

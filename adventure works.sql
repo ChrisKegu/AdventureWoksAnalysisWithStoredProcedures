@@ -258,12 +258,12 @@ END;
 
 
 
-SELECT Production.Product.Name, Production.Product.ListPrice, 
-Sales.SalesOrderDetail.OrderQty, 
-Sales.SalesOrderDetail.UnitPrice, Sales.SalesOrderDetail.LineTotal
-FROM   Production.Product 
-INNER JOIN Sales.SalesOrderDetail 
-ON Production.Product.ProductID = Sales.SalesOrderDetail.ProductID
+--SELECT Production.Product.Name, Production.Product.ListPrice, 
+--Sales.SalesOrderDetail.OrderQty, 
+--Sales.SalesOrderDetail.UnitPrice, Sales.SalesOrderDetail.LineTotal
+--FROM   Production.Product 
+--INNER JOIN Sales.SalesOrderDetail 
+--ON Production.Product.ProductID = Sales.SalesOrderDetail.ProductID
 
 
 CREATE PROC select_annual_profits
@@ -330,15 +330,6 @@ ORDER BY 3 DESC,2
 ;
 
 
-
-SELECT SUM((Sales.SalesOrderDetail.UnitPrice-Production.Product.StandardCost)*Sales.SalesOrderDetail.OrderQty) 
-AS "Total Profit",
-AVG((Sales.SalesOrderDetail.UnitPrice-Production.Product.StandardCost)*Sales.SalesOrderDetail.OrderQty) 
-AS "Average Profit"
-FROM Sales.SalesOrderDetails 
-INNER JOIN Production.Product
-ON Sales.SalesOrderDetails.ProductID=Production.Product
-
 CREATE PROC selecte_aggregated_profit
 AS
 SELECT  SUM((Sales.SalesOrderDetail.UnitPrice-Production.Product.StandardCost)*Sales.SalesOrderDetail.OrderQty)
@@ -350,8 +341,43 @@ MIN((Sales.SalesOrderDetail.UnitPrice-Production.Product.StandardCost)*Sales.Sal
 FROM   Sales.SalesOrderDetail INNER JOIN
              Production.Product ON Sales.SalesOrderDetail.ProductID = Production.Product.ProductID
 			 INNER JOIN SALes.SalesOrderHeader
+			 ON Sales.SalesOrderDetail.SalesOrderID=Sales.SalesOrderHeader.SalesOrderID;
+
+CREATE PROC select_weekly_profit
+AS
+SELECT
+SUM((Sales.SalesOrderDetail.UnitPrice-Production.Product.StandardCost)*Sales.SalesOrderDetail.OrderQty)
+AS "Total Profit",
+DATENAME(WEEK,OrderDate) AS [Week],DATENAME(MONTH,OrderDate) AS [Month],
+CONVERT(varchar(20),DATENAME(YEAR,OrderDate))  AS [Year]
+
+FROM   Sales.SalesOrderDetail INNER JOIN
+             Production.Product ON Sales.SalesOrderDetail.ProductID = Production.Product.ProductID
+			 INNER JOIN SALes.SalesOrderHeader
+			 ON Sales.SalesOrderDetail.SalesOrderID=Sales.SalesOrderHeader.SalesOrderID
+group by DATENAME(WEEK,OrderDate),
+DATENAME(YEAR,OrderDate),
+DATENAME(MONTH,OrderDate)
+ORDER BY 
+DATENAME(WEEK,OrderDate)--,DATENAME(YEAR,OrderDate)
+;
+
+
+CREATE PROC  select_weekday_profit
+AS
+SELECT 
+SUM((Sales.SalesOrderDetail.UnitPrice-Production.Product.StandardCost)*Sales.SalesOrderDetail.OrderQty)
+AS "Total Profit",
+DATENAME(WEEKDAY,OrderDate) AS [WeekDay],DATEPART(WEEKDAY,OrderDate) AS [DayNumber],
+datename(year,OrderDate)  AS [Year]
+FROM   Sales.SalesOrderDetail INNER JOIN
+             Production.Product ON Sales.SalesOrderDetail.ProductID = Production.Product.ProductID
+			 INNER JOIN SALes.SalesOrderHeader
 			 ON Sales.SalesOrderDetail.SalesOrderID=Sales.SalesOrderHeader.SalesOrderID
 
+group by DATENAME(WEEKDAY,OrderDate),DATEPART(WEEKDAY,OrderDate),DATENAME(year,OrderDate)
+order by datename(year,OrderDate),DATEPART(WEEKDAY,OrderDate),DATENAME(WEEKDAY,OrderDate)
+;
 
 
 --linetotal, order date and profit for time series analysis
@@ -368,7 +394,7 @@ FROM   Production.Product INNER JOIN
 			 ON Sales.SalesOrderDetail.SalesOrderID=Sales.SalesOrderHeader.SalesOrderID
 			 
 
-select distinct(production.product.name) from production.product
+--select distinct(production.product.name) from production.product
 
 
 
