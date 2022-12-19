@@ -379,6 +379,34 @@ group by DATENAME(WEEKDAY,OrderDate),DATEPART(WEEKDAY,OrderDate),DATENAME(year,O
 order by datename(year,OrderDate),DATEPART(WEEKDAY,OrderDate),DATENAME(WEEKDAY,OrderDate)
 ;
 
+CREATE PROC select_product_sales_profit 
+@stateDate DATETIME,
+@endDate DATETIME
+AS
+SELECT SUM(Sales.SalesOrderDetail.LineTotal) AS LineTotal, Sales.SalesOrderHeader.OrderDate, 
+
+ SUM((Sales.SalesOrderDetail.UnitPrice-Production.Product.StandardCost)*Sales.SalesOrderDetail.OrderQty )
+ AS Profit,
+
+Production.Product.Name AS Product
+FROM   Production.Product INNER JOIN
+             Purchasing.PurchaseOrderDetail  
+			 ON Production.Product.ProductID = Purchasing.PurchaseOrderDetail.ProductID INNER JOIN
+             Sales.SalesOrderDetail 
+			 ON Production.Product.ProductID = Sales.SalesOrderDetail.ProductID
+			 INNER JOIN Sales.SalesOrderHeader
+			 ON Sales.SalesOrderDetail.SalesOrderID=Sales.SalesOrderHeader.SalesOrderID
+WHERE (Sales.SalesOrderHeader.OrderDate BETWEEN @stateDate AND @endDate) 
+GROUP BY Sales.SalesOrderHeader.OrderDate,Production.Product.Name
+;
+
+--get distinct product names
+CREATE  PROC select_products
+AS
+SELECT DISTINCT(Production.Product.Name) as Product 
+FROM production.product ORDER BY Production.Product.Name;
+
+--select getdate()
 
 --linetotal, order date and profit for time series analysis
 SELECT  Sales.SalesOrderDetail.LineTotal,  
@@ -403,7 +431,7 @@ Sales.SalesOrderDetail.UnitPriceDiscount, Sales.SalesOrderDetail.OrderQty as "sa
 
  (Sales.SalesOrderDetail.UnitPrice-Production.Product.StandardCost)*Sales.SalesOrderDetail.OrderQty AS Profit,
 
-Production.Product.Name, Production.Product.ListPrice, Production.Product.StandardCost,
+Production.Product.Name AS Product, Production.Product.ListPrice, Production.Product.StandardCost,
 Purchasing.PurchaseOrderDetail.OrderQty, Purchasing.PurchaseOrderDetail.UnitPrice AS ["PO Unit Price"], 
              Purchasing.PurchaseOrderDetail.LineTotal AS ["PO LineTotal"]
 FROM   Production.Product INNER JOIN
