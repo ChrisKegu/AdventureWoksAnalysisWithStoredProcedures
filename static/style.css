@@ -44,9 +44,9 @@ h2 {
   margin: 0px;
   line-height: 1.6;
   color: inherit;
-  width: 80%;
+  width: 100%;
   user-select: none;
-  background-color: rgb(139, 132, 132);
+  background-color: rgb(12, 37, 179);
   border: 1px solid rgba(49, 51, 63, 0.2);
 }
 div.css-1n76uvr.e1tzin5v0,
@@ -109,10 +109,10 @@ div.css-1n76uvr.e1tzin5v0,
 }
 */
 
-/* for matricis*/
+/* cols for matricis */
 
 div.css-12w0qpk.e1tzin5v2 {
-  background-color: #f5f5f5;
+  background-color: #bfb7b7;
   border: 2px solid;
   border-color: black;
   padding: 20px 20px 20px 20px;

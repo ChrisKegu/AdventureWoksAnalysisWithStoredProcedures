@@ -76,3 +76,8 @@ def display_weekday_profits():
     labels={'WeekDay':'Day','Total Profit':'Profit'})
     #fig.update_layout(showlegend=False)
     return df, fig
+#time series
+def display_time_series_profits(startdate,enddate):
+    df=pd.read_sql_query(f"execute select_product_sales_profit '{startdate}','{enddate}'",init_connect())
+
+    return df

@@ -1,7 +1,7 @@
 import streamlit as st 
 import os
 from millify import millify# humanise numbers, make it mre readable for humans
-
+from datetime import date
 #importing methods
 from classes.profits import display_annual_profit
 from classes.profits import display_monthly_profit
@@ -9,12 +9,13 @@ from classes.profits import display_quaterly_profit
 from classes.profits import display_aggregated_profit
 from classes.profits import display_weekly_profits
 from classes.profits import display_weekday_profits
+from classes.profits import display_time_series_profits
 
 css_path=os.path.join('static','style.css')
 
 with open(css_path) as css:
     st.markdown(f'<style>{css.read()}</style>', unsafe_allow_html=True)
-    data=display_aggregated_profit()
+data=display_aggregated_profit()
 total_profit=data['Total Profit'][0]
 average_profit=data['Average Profit'][0]
 max_profit=data['Max Profit'][0]
@@ -88,3 +89,5 @@ with tab1:
         text="""Monday is an interesting day. Losses were made on Mondays in 2012
         but had the highest profit in 2013. """
         st.write(text)
+with tab6:
+    pass

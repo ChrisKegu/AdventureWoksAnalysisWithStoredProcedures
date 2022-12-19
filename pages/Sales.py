@@ -1,4 +1,6 @@
 import streamlit as st 
+import plotly.express as px
+from datetime import date
 from classes.data_class import display_month_sales
 from classes.data_class import display_weekday_sales
 from classes.data_class import display_weekly_sales
@@ -7,11 +9,13 @@ from classes.data_class import display_annual_sales
 from classes.data_class import display_sales_by_territory
 from classes.data_class import display_sales_by_region
 from classes.data_class import display_sales_by_region_map
+from classes.profits import display_time_series_profits
+from classes.data_class import display_distinct_products
 
 tabs=['Week Day','Weekly',
     'Monthly','Quarterly',
-    'Annual','Territorial','Regional']
-tab1, tab2, tab3,tab4,tab5,tab6,tab7 = st.tabs(tabs)
+    'Annual','Territorial','Regional','Time Series']
+tab1, tab2, tab3,tab4,tab5,tab6,tab7,tab8 = st.tabs(tabs)
 
 
 with tab1:
@@ -123,3 +127,36 @@ with tab7:
         elif display=='Map':
             result,fig=display_sales_by_region_map(year)
             st.plotly_chart(fig)
+with tab8:
+    with st.form(key='loan_form',clear_on_submit=True):
+        with st.container():
+            product_list=display_distinct_products()
+            products=st.multiselect('Select Product',product_list)
+        with st.container():
+            tab8col1,tab8col2,tab8col3=st.columns(3)
+            
+            min_val=date(2000,1,1)
+            max_val=date.today()
+            
+            startdate=tab8col1.date_input('Start Date',min_value=min_val,max_value=max_val)
+            enddate=tab8col2.date_input('End Date',max_value=max_val)
+            
+            tab8col3.markdown('')
+            tab8col3.markdown('')
+            submit_button=tab8col3.form_submit_button('Display')
+
+    if submit_button:
+        result=display_time_series_profits(startdate,enddate)
+        
+        if len(result)>0:
+            result=result[result['Product'].isin(products)]
+            result=result.pivot_table(index='OrderDate',columns='Product',
+            values='LineTotal',aggfunc='sum')
+            fig=px.line(result,x=result.index,y=result.columns,
+            labels={'value':'Sales','OrderDate':'Date'})
+            st.plotly_chart(fig)
+        else:
+            st.subheader(f'No Data found for the period {startdate} and {enddate} for product(s){products}')
+    
+
+

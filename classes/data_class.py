@@ -120,3 +120,10 @@ def display_sales_by_region_map(year):
     fig = go.Figure(data = [country_map],layout = layout)
     return df,fig
 
+
+def display_distinct_products():
+    
+    df=pd.read_sql_query(f'execute select_products',init_connect())
+    
+    return df
+
